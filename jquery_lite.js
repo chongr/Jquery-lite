@@ -75,17 +75,51 @@
     });
   };
 
-  function $l(selector) {
-    if (typeof selector === "string") {
-      var nodeList = document.querySelectorAll(selector);
-      var elementArray = [].slice.call(nodeList);
-    } else if (typeof selector === "object" && selector instanceof HTMLElement) {
-      var elementArray = [selector];
-    }
+  DOMNodeCollection.prototype.children = function() {
+    var childrenArray = [];
+    this.array.forEach( function(el) {
+      childrenArray = childrenArray.concat([].slice.call(el.children));
+    });
 
-    return new DOMNodeCollection(elementArray);
+    return new DOMNodeCollection(childrenArray);
+  };
 
+  DOMNodeCollection.prototype.parent = function () {
+    var parentArray = [];
+    this.array.forEach( function(el) {
+      console.log(el.parentElement);
+      parentArray = parentArray.concat([el.parentElement]);
+    });
+
+    return new DOMNodeCollection(parentArray);
+  };
+
+  DOMNodeCollection.prototype.find = function(selector) {
+    var nodes = [];
+    this.array.forEach( function(el) {
+      var childNodeArr = el.querySelectorAll(selector);
+      nodes = nodes.concat([].slice.call(childNodeArr));
+    });
+    return new DOMNodeCollection(nodes);
+  };
+
+DOMNodeCollection.prototype.remove = function () {
+  this.array.forEach( function(el) {
+    el.outerHTML = "";
+  });
+  this.array = [];
+};
+
+function $l(selector) {
+  if (typeof selector === "string") {
+    var nodeList = document.querySelectorAll(selector);
+    var elementArray = [].slice.call(nodeList);
+  } else if (typeof selector === "object" && selector instanceof HTMLElement) {
+    var elementArray = [selector];
   }
+
+  return new DOMNodeCollection(elementArray);
+}
 
   window.jquery.$l = $l;
 })();
