@@ -4,28 +4,28 @@ function Coord (rowColArray) {
 }
 
 Coord.prototype.plus = function (dir) {
-  if (dir === 'N') {
+  if (dir === 'E') {
     this.col += 1;
-  } else if (dir === 'S') {
+  } else if (dir === 'W') {
     this.col -= 1;
-  } else if (dir === 'E') {
+  } else if (dir === 'N') {
     this.row += 1;
-  } else if (dir === 'W'){
+  } else if (dir === 'S'){
     this.row -= 1;
   } else {
     console.log("invalid");
   }
 };
 
-Coord.prototype.equals = function (otherCoord) {
-  if (this.row === otherCoord.row && this.col === otherCoord.col) {
+Coord.prototype.equals = function (pos) {
+  if (this.row === pos[0] && this.col === pos[1]) {
     return true;
   }
   return false;
 };
 
 function Snake(startArray) {
-  this.direction = "N";
+  this.direction = 'N';
   this.segments = [new Coord(startArray)];
 
 }
@@ -35,8 +35,9 @@ Snake.prototype.turn = function(newDir) {
 };
 
 Snake.prototype.move = function() {
+  var snake = this;
   this.segments.forEach( function(el) {
-    el.plus(this.direction);
+    el.plus(snake.direction);
   });
 };
 
@@ -58,3 +59,4 @@ function Board(startingPos) {
 
 
 module.exports = Board;
+// module.exports = Coord;

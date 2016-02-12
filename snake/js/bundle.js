@@ -65,28 +65,28 @@
 	}
 	
 	Coord.prototype.plus = function (dir) {
-	  if (dir === 'N') {
+	  if (dir === 'E') {
 	    this.col += 1;
-	  } else if (dir === 'S') {
+	  } else if (dir === 'W') {
 	    this.col -= 1;
-	  } else if (dir === 'E') {
+	  } else if (dir === 'N') {
 	    this.row += 1;
-	  } else if (dir === 'W'){
+	  } else if (dir === 'S'){
 	    this.row -= 1;
 	  } else {
 	    console.log("invalid");
 	  }
 	};
 	
-	Coord.prototype.equals = function (otherCoord) {
-	  if (this.row === otherCoord.row && this.col === otherCoord.col) {
+	Coord.prototype.equals = function (pos) {
+	  if (this.row === pos[0] && this.col === pos[1]) {
 	    return true;
 	  }
 	  return false;
 	};
 	
 	function Snake(startArray) {
-	  this.direction = "N";
+	  this.direction = 'N';
 	  this.segments = [new Coord(startArray)];
 	
 	}
@@ -96,8 +96,9 @@
 	};
 	
 	Snake.prototype.move = function() {
+	  var snake = this;
 	  this.segments.forEach( function(el) {
-	    el.plus(this.direction);
+	    el.plus(snake.direction);
 	  });
 	};
 	
@@ -119,6 +120,7 @@
 	
 	
 	module.exports = Board;
+	// module.exports = Coord;
 
 
 /***/ },
@@ -126,6 +128,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Board = __webpack_require__(1);
+	// var Coord = require('./snake.js');
 	var $l = window.$l;
 	// var $l = require('../../jquery_lite.js');
 	
@@ -133,19 +136,33 @@
 	  this.$el = $el;
 	  this.board = board;
 	
-	  this.renderBoard();
+	
+	  window.setInterval(function() {
+	    this.renderBoard();
+	    this.board.snake.move();
+	  }.bind(this),500);
 	}
 	
 	View.prototype.renderBoard = function () {
+	  $l("li").remove();
 	  var ul = this.$el;
+	  var boardStored = this.board;
 	  this.board.grid.forEach( function(row, rowIdx) {
 	    row.forEach( function(col, colIdx) {
+	      var snake = boardStored.snake.segments;
 	      var li = document.createElement("li");
 	      var liNode = $l(li);
 	      liNode.attr("pos", rowIdx +", " + colIdx);
+	      for(var i = 0; i < snake.length; i++) {
+	        if (snake[i].equals([rowIdx, colIdx])) {
+	          liNode.addClass("snake");
+	        }
+	      }
 	      ul.append(liNode.array[0]);
 	    });
 	  });
+	
+	
 	};
 	
 	module.exports = View;
